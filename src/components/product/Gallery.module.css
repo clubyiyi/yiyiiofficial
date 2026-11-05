@@ -35,6 +35,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* --frame: recorte base de fotos de Shopify (ver ImageFrame). */
+  transform: scale(var(--frame, 1));
 }
 
 .main {
@@ -58,6 +60,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* --frame: recorte base de fotos de Shopify (ver ImageFrame). */
+  transform: scale(var(--frame, 1));
 }
 
 .arrow {

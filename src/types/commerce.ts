@@ -29,6 +29,14 @@ export interface ProductArt {
   bow?: boolean;
 }
 
+/** Recorte base de una foto sin recortar (p. ej. 3:4 de Shopify) para el formato 4:5 de la tienda. Se aplica en todas partes. */
+export interface ImageFrame {
+  /** Punto fijo del recorte (CSS object-position). */
+  focus: string;
+  /** Acercamiento (1 = la foto ocupa todo el ancho). */
+  zoom: number;
+}
+
 export interface ProductImage {
   /** Ruta o URL de la foto real. Si falta, se pinta `art`. */
   src?: string;
@@ -38,6 +46,8 @@ export interface ProductImage {
   focus?: string;
   /** Acercamiento de la foto en la tarjeta (1 = sin zoom) para igualar encuadres entre productos. */
   zoom?: number;
+  /** Recorte base (fotos de Shopify). A diferencia de `zoom`, se aplica en tarjeta, galería, bolsa y miniaturas. */
+  frame?: ImageFrame;
   alt: LocalizedText;
   art: ProductArt;
 }

@@ -24,7 +24,7 @@
   height: 100%;
   object-fit: cover;
   /* --zoom: acercamiento por foto para igualar encuadres (ver ProductImage.zoom). */
-  transform: scale(var(--zoom, 1));
+  transform: scale(calc(var(--zoom, 1) * var(--frame, 1)));
   transition:
     transform var(--duration-image) var(--ease-out),
     opacity var(--duration-slow) var(--ease-out);
@@ -57,7 +57,7 @@
 
 @media (hover: hover) {
   .card:hover .image {
-    transform: scale(calc(var(--zoom, 1) * 1.04));
+    transform: scale(calc(var(--zoom, 1) * var(--frame, 1) * 1.04));
   }
   .card:hover .alt {
     opacity: 1;

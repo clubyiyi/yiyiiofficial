@@ -1,4 +1,5 @@
 import { demoCategories } from '@/data/demoProducts';
+import { shopifyFraming } from '@/data/shopifyFraming';
 import type {
   CategorySlug,
   LocalizedText,
@@ -86,9 +87,11 @@ export function mapProduct(es: ShopifyProduct, en?: ShopifyProduct): Product {
   const colorOptEn = en?.options.find((o) => o.name === colorOpt?.name) ?? en?.options[es.options.indexOf(colorOpt!)];
   const sizeOpt = es.options.find((o) => SIZE_OPTION.test(o.name));
 
+  const fileName = (url: string) => url.split('?')[0].split('/').pop() ?? '';
   const images: ProductImage[] = es.images.nodes.map((img, i) => ({
     src: img.url,
     webp: img.webp,
+    frame: shopifyFraming[es.handle]?.[fileName(img.original)],
     alt: loc(img.altText || es.title, en?.images.nodes[i]?.altText || en?.title),
     art,
   }));

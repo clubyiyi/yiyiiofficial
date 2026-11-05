@@ -17,9 +17,10 @@ export function ProductMedia({ image, className }: { image: ProductImage; classN
         alt={tr(image.alt)}
         className={className}
         style={{
-          objectPosition: image.focus,
-          transformOrigin: image.focus,
+          objectPosition: image.frame?.focus ?? image.focus,
+          transformOrigin: image.frame?.focus ?? image.focus,
           ...(image.zoom ? ({ '--zoom': image.zoom } as CSSProperties) : null),
+          ...(image.frame ? ({ '--frame': image.frame.zoom } as CSSProperties) : null),
         }}
         loading="lazy"
         decoding="async"

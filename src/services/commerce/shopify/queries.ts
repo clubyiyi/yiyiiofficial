@@ -15,7 +15,7 @@ export interface ShopifyProduct {
   publishedAt: string;
   collections: { nodes: { handle: string }[] };
   options: { name: string; optionValues: { name: string; swatch: { color: string | null } | null }[] }[];
-  images: { nodes: { id: string; altText: string | null; url: string; webp: string }[] };
+  images: { nodes: { id: string; altText: string | null; original: string; url: string; webp: string }[] };
   variants: {
     nodes: {
       id: string;
@@ -54,6 +54,7 @@ export const productsQuery = (withInventory: boolean) => /* GraphQL */ `
           nodes {
             id
             altText
+            original: url
             url(transform: { maxWidth: 1000 })
             webp: url(transform: { maxWidth: 1000, preferredContentType: WEBP })
           }
