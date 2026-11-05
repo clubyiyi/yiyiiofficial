@@ -54,6 +54,13 @@ src/
 Código: `src/services/commerce/shopify/` (config, cliente GraphQL, consultas, mapeo al modelo y adaptador).
 La vista previa (`npm run build:preview`) usa siempre el catálogo local (`.env.preview`).
 
+## Publicar en Vercel
+`vercel.json` ya define el build (`npm run build` → `dist/`) y redirige todas las rutas a `index.html`.
+Así `/p/<handle>` y `/c/<categoría>` funcionan al recargar.
+Variables en Vercel (Settings → Environment Variables):
+`VITE_COMMERCE_PROVIDER=shopify`, `VITE_SHOPIFY_STORE_DOMAIN`, `VITE_SHOPIFY_STOREFRONT_TOKEN`.
+Son de build: tras cambiarlas hay que volver a desplegar.
+
 ## Conectar un backend real
 1. Crea `src/services/commerce/<proveedor>Adapter.ts` que implemente `CommerceAdapter` y mapee la API a `types/commerce.ts`.
 2. Regístralo en `services/commerce/index.ts` y define `VITE_COMMERCE_PROVIDER` (ver `.env.example`).
