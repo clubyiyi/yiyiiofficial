@@ -1,0 +1,62 @@
+.rail {
+  position: relative;
+}
+
+.track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 3 * var(--space-2)) / 4);
+  gap: var(--space-2);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: var(--space-2);
+}
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.item {
+  scroll-snap-align: start;
+}
+
+.nav {
+  position: absolute;
+  top: calc(50% - 60px);
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  background: var(--color-white);
+  border: 1px solid var(--color-ink);
+  transition: opacity var(--duration-base), background-color var(--duration-fast), color var(--duration-fast);
+  z-index: 2;
+}
+.nav:hover:not(:disabled) {
+  background: var(--color-ink);
+  color: var(--color-white);
+}
+.nav:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+.prev {
+  left: -12px;
+}
+.next {
+  right: -12px;
+}
+
+@media (max-width: 1100px) {
+  .track {
+    grid-auto-columns: calc((100% - 2 * var(--space-2)) / 2.6);
+  }
+}
+@media (max-width: 640px) {
+  .track {
+    grid-auto-columns: 72%;
+  }
+  .nav {
+    display: none;
+  }
+}

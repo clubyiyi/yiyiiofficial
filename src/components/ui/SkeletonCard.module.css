@@ -1,0 +1,30 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.media,
+.line {
+  background: linear-gradient(90deg, var(--color-pink-50) 0%, var(--color-pink-100) 50%, var(--color-pink-50) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+.media {
+  aspect-ratio: 4 / 5;
+  margin-bottom: var(--space-2);
+}
+.line {
+  height: 12px;
+  margin-inline: var(--space-3);
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .media,
+  .line {
+    animation: none;
+  }
+}

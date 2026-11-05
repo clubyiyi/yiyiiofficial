@@ -1,0 +1,83 @@
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  min-height: 48px;
+  padding: 0 var(--space-5);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+  /* Sombra desplazada de estilo editorial, como un botón "apilado". */
+  box-shadow: 3px 3px 0 0 currentColor;
+}
+
+.button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 0 currentColor;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: none;
+}
+
+.arrow {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.button:hover .arrow {
+  transform: translateX(4px);
+}
+
+.primary {
+  background: var(--color-ink);
+  color: var(--color-white);
+  box-shadow: 3px 3px 0 0 var(--color-pink-400);
+}
+.primary:hover {
+  background: var(--color-pink-600);
+}
+
+.pink {
+  background: var(--color-accent);
+  color: var(--color-white);
+  box-shadow: 3px 3px 0 0 var(--color-ink);
+}
+.pink:hover {
+  background: var(--color-accent-hover);
+}
+
+.light {
+  background: var(--color-white);
+  color: var(--color-ink);
+  box-shadow: 3px 3px 0 0 var(--color-ink);
+}
+.light:hover {
+  background: var(--color-pink-100);
+}
+
+.outline {
+  background: transparent;
+  color: var(--color-ink);
+  border-color: var(--color-ink);
+  box-shadow: none;
+}
+.outline:hover {
+  background: var(--color-ink);
+  color: var(--color-white);
+}
+
+.full {
+  width: 100%;
+}

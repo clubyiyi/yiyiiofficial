@@ -1,0 +1,11 @@
+.page {
+  padding-top: var(--space-8);
+  min-height: 50vh;
+}
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  color: var(--color-text-muted);
+}

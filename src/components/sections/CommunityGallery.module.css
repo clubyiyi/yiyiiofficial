@@ -1,0 +1,105 @@
+.section {
+  padding-top: var(--section-gap);
+  scroll-margin-top: var(--header-height);
+}
+
+/* Mosaico: la primera foto ocupa 2×2 y las otras cuatro rellenan el resto sin huecos. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.tile {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--color-bg-tint);
+}
+.tile:first-child {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.link {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-image) var(--ease-out);
+  will-change: transform;
+}
+.link:hover .image,
+.link:focus-visible .image {
+  transform: scale(1.06);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background: rgb(224 19 122 / 0.55);
+  color: var(--color-white);
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+.link:hover .overlay,
+.link:focus-visible .overlay {
+  opacity: 1;
+}
+.tag {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--text-xl);
+}
+.view {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
+}
+
+.hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.hint svg {
+  color: var(--color-accent);
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* En táctil no hay hover: se muestra solo una etiqueta discreta. */
+  .overlay {
+    opacity: 1;
+    background: linear-gradient(0deg, rgb(26 15 20 / 0.45), transparent 45%);
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: var(--space-3);
+  }
+  .overlay > svg,
+  .view {
+    display: none;
+  }
+  .tag {
+    font-size: var(--text-base);
+  }
+}

@@ -1,0 +1,135 @@
+.section {
+  margin-top: var(--section-gap);
+  background:
+    radial-gradient(circle at 12% 18%, rgb(255 255 255 / 0.22) 0 2px, transparent 3px) 0 0 / 34px 34px,
+    linear-gradient(135deg, var(--color-pink-500) 0%, var(--color-pink-600) 55%, var(--color-sale) 100%);
+  color: var(--color-white);
+  overflow: hidden;
+}
+
+/* Cinta animada «SALE» */
+.ticker {
+  background: var(--color-ink);
+  color: var(--color-pink-200);
+  overflow: hidden;
+}
+.tickerTrack {
+  display: flex;
+  width: max-content;
+  animation: ticker 22s linear infinite;
+}
+.tickerTrack span {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tickerTrack i {
+  margin-left: var(--space-4);
+  font-style: normal;
+  color: var(--color-pink-400);
+}
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.inner {
+  padding-block: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+}
+
+.head {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: end;
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+.eyebrow {
+  font-family: var(--font-script);
+  font-size: var(--text-3xl);
+  line-height: 1;
+  color: var(--color-pink-100);
+}
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 1.6rem + 6vw, 7rem);
+  font-weight: var(--weight-regular);
+  font-style: italic;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-shadow: 0 8px 40px rgb(120 6 64 / 0.35);
+}
+
+.stamp {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  width: clamp(110px, 8vw + 60px, 150px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-white);
+  color: var(--color-sale);
+  box-shadow: 0 0 0 6px rgb(255 255 255 / 0.3), var(--shadow-pop);
+  transform: rotate(-8deg);
+}
+.stampUp {
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+.stampPct {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.2rem + 2vw, 2.75rem);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-4);
+  text-align: right;
+}
+.text {
+  max-width: 36ch;
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  color: rgb(255 255 255 / 0.92);
+}
+
+/* Las tarjetas sobre fondo rosa: base blanca para que el producto destaque. */
+.rail :global(article) {
+  background: var(--color-white);
+  color: var(--color-ink);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+@media (max-width: 960px) {
+  .head {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .copy {
+    grid-column: 1 / -1;
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+@media (max-width: 480px) {
+  .stamp {
+    width: 96px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tickerTrack {
+    animation: none;
+  }
+}

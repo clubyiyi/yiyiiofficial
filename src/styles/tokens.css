@@ -1,0 +1,123 @@
+/* ==========================================================================
+   DESIGN TOKENS — YiYi!
+   Cambia aquí colores, tipografía, espacios y animaciones de toda la tienda.
+   ========================================================================== */
+
+:root {
+  /* ---------- Color: paleta de marca ---------- */
+  --color-pink-50: #fff4f9;
+  --color-pink-100: #ffe3f0;
+  --color-pink-200: #ffc6e0;
+  --color-pink-300: #ff9fcb;
+  --color-pink-400: #ff6eb0;
+  --color-pink-500: #ff2e93; /* Barbie pink */
+  --color-pink-600: #e0137a;
+  --color-pink-700: #b10a5f;
+  --color-cherry: #c8102e;
+  --color-lilac: #d9c6ff;
+  --color-baby-blue: #c9e6ff;
+  --color-butter: #fff1b8;
+  --color-chrome: #e9e6ee;
+  --color-pearl: #fbf7f4;
+  --color-ink: #1a0f14;
+  --color-ink-soft: #4a3a42;
+  --color-white: #ffffff;
+
+  /* ---------- Color: roles semánticos ---------- */
+  --color-bg: var(--color-white);
+  --color-bg-soft: var(--color-pearl);
+  --color-bg-tint: var(--color-pink-50);
+  --color-surface: var(--color-white);
+  --color-text: var(--color-ink);
+  --color-text-muted: #7a6870;
+  --color-text-inverse: var(--color-white);
+  --color-border: #eadde3;
+  --color-border-strong: var(--color-ink);
+  --color-accent: var(--color-pink-500);
+  --color-accent-hover: var(--color-pink-600);
+  --color-accent-soft: var(--color-pink-100);
+  --color-promo-bg: var(--color-ink);
+  --color-promo-text: var(--color-pink-200);
+  --color-sale: var(--color-cherry);
+  --color-focus: var(--color-pink-500);
+  --color-overlay: rgb(26 15 20 / 0.45);
+
+  --gradient-chrome: linear-gradient(135deg, #ffffff 0%, #f3d9e6 30%, #ffffff 50%, #e8d8ff 75%, #ffffff 100%);
+  --gradient-blush: linear-gradient(180deg, var(--color-pink-100) 0%, var(--color-pink-50) 100%);
+
+  /* ---------- Tipografía ---------- */
+  --font-display: 'Bodoni Moda', 'Didot', 'Bodoni 72', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-script: 'Pinyon Script', 'Snell Roundhand', cursive;
+
+  --text-2xs: 0.6875rem; /* 11 */
+  --text-xs: 0.75rem; /* 12 */
+  --text-sm: 0.875rem; /* 14 */
+  --text-base: 1rem; /* 16 */
+  --text-lg: 1.125rem; /* 18 */
+  --text-xl: 1.375rem; /* 22 */
+  --text-2xl: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  --text-3xl: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+  --text-display: clamp(2.75rem, 1.2rem + 6.5vw, 7.5rem);
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+  --leading-tight: 1.02;
+  --leading-snug: 1.25;
+  --leading-body: 1.55;
+  --tracking-caps: 0.14em;
+  --tracking-tight: -0.02em;
+
+  /* ---------- Espacios ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --section-gap: clamp(3.5rem, 2rem + 5vw, 7rem);
+  --gutter: clamp(1rem, 0.5rem + 2vw, 3rem);
+  --container-max: 1600px;
+
+  /* ---------- Formas y sombras ---------- */
+  --radius-sm: 4px;
+  --radius-md: 10px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+  --shadow-card: 0 10px 30px -12px rgb(177 10 95 / 0.25);
+  --shadow-pop: 0 24px 60px -20px rgb(26 15 20 / 0.35);
+
+  /* ---------- Layout ---------- */
+  --promo-height: 36px;
+  --header-height: 72px;
+  --z-header: 50;
+  --z-drawer: 80;
+  --z-overlay: 70;
+
+  /* ---------- Animación ---------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 160ms;
+  --duration-base: 280ms;
+  --duration-slow: 600ms;
+  --duration-image: 900ms;
+}
+
+@media (max-width: 960px) {
+  :root {
+    --header-height: 60px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+    --duration-image: 0ms;
+  }
+}
