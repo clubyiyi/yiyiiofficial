@@ -116,7 +116,8 @@ export function mapProduct(es: ShopifyProduct, en?: ShopifyProduct): Product {
     const colorValue = opt(colorOpt?.name);
     return {
       id: v.id,
-      size: opt(sizeOpt?.name) ?? (v.title === 'Default Title' ? 'Única' : v.title),
+      // Sin opción «Talla» la prenda es de talla única (nunca se usa el título de la variante, que puede ser el color).
+      size: opt(sizeOpt?.name) ?? 'Única',
       available: v.availableForSale,
       // `quantityAvailable` solo llega con el alcance unauthenticated_read_product_inventory.
       stock: v.quantityAvailable ?? undefined,
