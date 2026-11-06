@@ -11,6 +11,8 @@ export const brand = {
   promoIntervalMs: 4500,
   /** Muestra la etiqueta «DEMO» en las tarjetas de productos de demostración. */
   showDemoBadge: false,
+  /** Toda prenda que no esté en rebaja se muestra como «Próximo lanzamiento» (no se puede comprar). */
+  comingSoonUnlessOnSale: true,
   /** Enlace de WhatsApp para asesoría de tallas, p. ej. 'https://wa.me/34600000000'. Vacío = solo texto. */
   whatsapp: '',
   social: [

@@ -3,6 +3,7 @@ import { useProducts } from '@/hooks/useProducts';
 import { commerce } from '@/services/commerce';
 import type { CartLine, Money, Product, ProductVariant } from '@/types/commerce';
 import { usePersistentState } from './usePersistentState';
+import { isComingSoon } from '@/utils/launch';
 
 /**
  * Bolsa local (localStorage). Con Shopify, las líneas guardan el id de variante de Shopify
@@ -42,6 +43,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const add = useCallback(
     (product: Product, variantId?: string, quantity = 1) => {
+      if (isComingSoon(product)) return; // aún no se vende
       const variant =
         product.variants.find((v) => v.id === variantId) ?? product.variants.find((v) => v.available);
       if (!variant) return;
@@ -81,7 +83,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const lines = rawLines.flatMap<ResolvedLine>((line) => {
       const product = productIndex.get(line.productId);
       const variant = product?.variants.find((v) => v.id === line.variantId);
-      if (!product || !variant) return [];
+      if (!product || !variant || isComingSoon(product)) return [];
       return [
         {
           ...line,

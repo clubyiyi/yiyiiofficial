@@ -16,6 +16,7 @@ import { Icon, type IconName } from '@/components/ui/Icon';
 import { ProductMedia } from '@/components/ui/Media';
 import { ProductRail } from '@/components/ui/ProductRail';
 import { variantsForColor } from '@/utils/colors';
+import { isComingSoon } from '@/utils/launch';
 import styles from './ProductPage.module.css';
 
 /** Categorías que combinan con cada una para «Completa el look». */
@@ -66,9 +67,16 @@ function ProductView({ product }: { product: Product }) {
     () => all.filter((p) => p.category === product.category && p.id !== product.id),
     [all, product],
   );
+  const soon = isComingSoon(product);
+  // «Completa el look» solo con prendas a la venta.
   const lookItems = useMemo(
-    () => lookPairs[product.category].map((c) => all.find((p) => p.category === c)).filter((p): p is Product => Boolean(p)),
-    [all, product],
+    () =>
+      soon
+        ? []
+        : lookPairs[product.category]
+            .map((c) => all.find((p) => p.category === c && !isComingSoon(p)))
+            .filter((p): p is Product => Boolean(p)),
+    [all, product, soon],
   );
 
   const name = tr(product.name);
@@ -86,10 +94,10 @@ function ProductView({ product }: { product: Product }) {
   useEffect(() => {
     const el = buyRef.current;
     if (!el) return;
-    const io = new IntersectionObserver(([entry]) => setShowSticky(!entry.isIntersecting && entry.boundingClientRect.top < 0));
+    const io = new IntersectionObserver(([entry]) => setShowSticky(!soon && !entry.isIntersecting && entry.boundingClientRect.top < 0));
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [soon]);
 
   const closeGuide = useCallback(() => setGuideOpen(false), []);
 
@@ -127,7 +135,14 @@ function ProductView({ product }: { product: Product }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.08 }}
           >
-            {(soldOut || product.badges.length > 0) && (
+            {soon ? (
+              <div className={styles.badges}>
+                <span className={`${styles.badge} ${styles.badgeSoon}`}>
+                  <Icon name="sparkle" size={12} />
+                  {t('products.comingSoon')}
+                </span>
+              </div>
+            ) : (soldOut || product.badges.length > 0) && (
               <div className={styles.badges}>
                 {soldOut && <span className={styles.badge}>{t('products.soldOut')}</span>}
                 {!soldOut && product.badges.map((b) => (
@@ -194,96 +209,142 @@ function ProductView({ product }: { product: Product }) {
             </div>
             )}
 
-            <div className={styles.block} ref={sizesRef}>
-              <div className={styles.sizeHead}>
-                <p className={styles.label}>
-                  {t('product.size')}
-                  {variant && (
-                    <>
-                      : <strong>{variant.size}</strong>
-                    </>
-                  )}
-                </p>
-                <button type="button" className={styles.guideBtn} onClick={() => setGuideOpen(true)}>
-                  <Icon name="ruler" size={16} />
-                  {t('product.sizeGuide')}
-                </button>
-              </div>
-              <motion.div
-                className={styles.sizes}
-                role="radiogroup"
-                aria-label={t('product.size')}
-                animate={needSize ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
-                transition={{ duration: 0.4 }}
+            {soon ? (
+              <motion.section
+                className={styles.launch}
+                ref={buyRef}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                aria-labelledby="launch-title"
               >
-                {sizeVariants.map((v) => (
-                  <button
-                    key={v.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={variantId === v.id}
-                    disabled={!v.available}
-                    title={v.available ? undefined : t('product.sizeSoldOut')}
-                    className={`${styles.size} ${variantId === v.id ? styles.sizeOn : ''}`}
-                    onClick={() => {
-                      setVariantId(v.id);
-                      setNeedSize(false);
-                      setQty((q) => Math.min(q, v.stock ?? 10));
-                    }}
-                  >
-                    {v.size}
-                    {v.available && v.stock !== undefined && v.stock <= 5 && (
-                      <span className={styles.lowStock}>{tp('product.lowStock', v.stock)}</span>
-                    )}
+                <span className={styles.launchSpark} aria-hidden="true">✦</span>
+                <span className={`${styles.launchSpark} ${styles.launchSpark2}`} aria-hidden="true">✦</span>
+                <p className={styles.launchEyebrow}>
+                  <Icon name="sparkle" size={12} />
+                  {t('product.launchEyebrow')}
+                </p>
+                <h2 id="launch-title" className={styles.launchTitle}>
+                  {t('product.launchTitle')}
+                </h2>
+                <p className={styles.launchText}>{t('product.launchText')}</p>
+                <div className={styles.launchSizes}>
+                  <span>{t('product.launchSizes')}</span>
+                  <ul>
+                    {sizeVariants.map((v) => (
+                      <li key={v.id}>{v.size}</li>
+                    ))}
+                  </ul>
+                  <button type="button" className={styles.guideBtn} onClick={() => setGuideOpen(true)}>
+                    <Icon name="ruler" size={16} />
+                    {t('product.sizeGuide')}
                   </button>
-                ))}
-              </motion.div>
-              {variant?.stock !== undefined && variant.stock <= 5 && (
-                <p className={styles.lowStockHint}>
-                  <span className={styles.pulse} aria-hidden="true" />
-                  {t('product.lowStockHint', { count: variant.stock, size: variant.size })}
-                </p>
-              )}
-              <AnimatePresence>
-                {needSize && (
-                  <motion.p
-                    className={styles.needSize}
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    role="alert"
-                  >
-                    {t('product.selectSize')}
-                  </motion.p>
+                </div>
+                <motion.button
+                  type="button"
+                  className={`${styles.addBtn} ${styles.launchBtn}`}
+                  aria-pressed={saved}
+                  onClick={() => toggle(product.id)}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Icon name="heart" filled={saved} size={18} />
+                  {saved ? t('products.savedForLaunch') : t('products.saveForLaunch')}
+                </motion.button>
+              </motion.section>
+            ) : (
+              <>
+              <div className={styles.block} ref={sizesRef}>
+                <div className={styles.sizeHead}>
+                  <p className={styles.label}>
+                    {t('product.size')}
+                    {variant && (
+                      <>
+                        : <strong>{variant.size}</strong>
+                      </>
+                    )}
+                  </p>
+                  <button type="button" className={styles.guideBtn} onClick={() => setGuideOpen(true)}>
+                    <Icon name="ruler" size={16} />
+                    {t('product.sizeGuide')}
+                  </button>
+                </div>
+                <motion.div
+                  className={styles.sizes}
+                  role="radiogroup"
+                  aria-label={t('product.size')}
+                  animate={needSize ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {sizeVariants.map((v) => (
+                    <button
+                      key={v.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={variantId === v.id}
+                      disabled={!v.available}
+                      title={v.available ? undefined : t('product.sizeSoldOut')}
+                      className={`${styles.size} ${variantId === v.id ? styles.sizeOn : ''}`}
+                      onClick={() => {
+                        setVariantId(v.id);
+                        setNeedSize(false);
+                        setQty((q) => Math.min(q, v.stock ?? 10));
+                      }}
+                    >
+                      {v.size}
+                      {v.available && v.stock !== undefined && v.stock <= 5 && (
+                        <span className={styles.lowStock}>{tp('product.lowStock', v.stock)}</span>
+                      )}
+                    </button>
+                  ))}
+                </motion.div>
+                {variant?.stock !== undefined && variant.stock <= 5 && (
+                  <p className={styles.lowStockHint}>
+                    <span className={styles.pulse} aria-hidden="true" />
+                    {t('product.lowStockHint', { count: variant.stock, size: variant.size })}
+                  </p>
                 )}
-              </AnimatePresence>
-            </div>
-
-            <div className={styles.buy} ref={buyRef}>
-              <div className={styles.qty} role="group" aria-label={t('product.quantity')}>
-                <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label={t('cart.decrease')}>
-                  <Icon name="minus" size={14} />
-                </button>
-                <span aria-live="polite">{qty}</span>
-                <button type="button" onClick={() => setQty((q) => Math.min(variant?.stock ?? 10, q + 1))} aria-label={t('cart.increase')}>
-                  <Icon name="plus" size={14} />
-                </button>
+                <AnimatePresence>
+                  {needSize && (
+                    <motion.p
+                      className={styles.needSize}
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      role="alert"
+                    >
+                      {t('product.selectSize')}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               </div>
-              <button type="button" className={styles.addBtn} onClick={addToBag} disabled={soldOut}>
-                <Icon name="bag" size={18} />
-                {soldOut ? t('products.soldOut') : t('products.addToBag')}
-              </button>
-              <motion.button
-                type="button"
-                className={`${styles.wish} ${saved ? styles.wishOn : ''}`}
-                aria-pressed={saved}
-                aria-label={saved ? t('products.removeFromWishlist') : t('products.addToWishlist')}
-                onClick={() => toggle(product.id)}
-                whileTap={{ scale: 0.85 }}
-              >
-                <Icon name="heart" filled={saved} size={20} />
-              </motion.button>
-            </div>
+
+              <div className={styles.buy} ref={buyRef}>
+                <div className={styles.qty} role="group" aria-label={t('product.quantity')}>
+                  <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label={t('cart.decrease')}>
+                    <Icon name="minus" size={14} />
+                  </button>
+                  <span aria-live="polite">{qty}</span>
+                  <button type="button" onClick={() => setQty((q) => Math.min(variant?.stock ?? 10, q + 1))} aria-label={t('cart.increase')}>
+                    <Icon name="plus" size={14} />
+                  </button>
+                </div>
+                <button type="button" className={styles.addBtn} onClick={addToBag} disabled={soldOut}>
+                  <Icon name="bag" size={18} />
+                  {soldOut ? t('products.soldOut') : t('products.addToBag')}
+                </button>
+                <motion.button
+                  type="button"
+                  className={`${styles.wish} ${saved ? styles.wishOn : ''}`}
+                  aria-pressed={saved}
+                  aria-label={saved ? t('products.removeFromWishlist') : t('products.addToWishlist')}
+                  onClick={() => toggle(product.id)}
+                  whileTap={{ scale: 0.85 }}
+                >
+                  <Icon name="heart" filled={saved} size={20} />
+                </motion.button>
+              </div>
+              </>
+            )}
 
             <div className={styles.accordion}>
               <AccordionItem title={t('product.tabs.description')} defaultOpen>

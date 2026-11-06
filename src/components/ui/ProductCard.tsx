@@ -11,6 +11,7 @@ import { Icon } from './Icon';
 import { ProductMedia } from './Media';
 import { Price } from './Price';
 import { variantsForColor } from '@/utils/colors';
+import { isComingSoon } from '@/utils/launch';
 import styles from './ProductCard.module.css';
 
 interface ProductCardProps {
@@ -41,6 +42,8 @@ export function ProductCard({ product }: ProductCardProps) {
   const primary = color ? product.images[color.image] : product.images[0];
   const secondary = color ? undefined : product.images[1];
 
+  const soon = isComingSoon(product);
+
   const handleAdd = () => {
     add(product, available[0]?.id);
     notify(t('cart.addedToast', { name }));
@@ -49,7 +52,7 @@ export function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <article className={`${styles.card} ${!available.length ? styles.isSoldOut : ''}`}>
+    <article className={`${styles.card} ${soon ? styles.isSoon : !available.length ? styles.isSoldOut : ''}`}>
       <div className={styles.media}>
         <ProductMedia image={primary} className={styles.image} />
         {secondary && <ProductMedia image={secondary} className={`${styles.image} ${styles.alt}`} />}
@@ -57,8 +60,15 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <div className={styles.badges}>
           {brand.showDemoBadge && product.isDemo && <span className={`${styles.badge} ${styles.demo}`}>{t('common.demoBadge')}</span>}
-          {!available.length && <span className={`${styles.badge} ${styles.soldOutBadge}`}>{t('products.soldOut')}</span>}
-          {available.length > 0 && product.badges.slice(0, 1).map((badge) => (
+          {soon && (
+            <span className={`${styles.badge} ${styles.soonBadge}`}>
+              <Icon name="sparkle" size={11} />
+              <span className={styles.soonLong}>{t('products.comingSoon')}</span>
+              <span className={styles.soonShort}>{t('products.comingSoonShort')}</span>
+            </span>
+          )}
+          {!soon && !available.length && <span className={`${styles.badge} ${styles.soldOutBadge}`}>{t('products.soldOut')}</span>}
+          {!soon && available.length > 0 && product.badges.slice(0, 1).map((badge) => (
             <span key={badge} className={`${styles.badge} ${badge === 'sale' ? styles.saleBadge : ''}`}>
               {badge === 'sale' && pct > 0 ? `−${pct}%` : t(`products.badges.${badge}`)}
             </span>
@@ -78,6 +88,19 @@ export function ProductCard({ product }: ProductCardProps) {
           </motion.span>
         </motion.button>
 
+        {soon ? (
+          <button
+            type="button"
+            className={`${styles.quickAdd} ${styles.soonSave}`}
+            aria-pressed={saved}
+            onClick={() => toggle(product.id)}
+          >
+            <span className={styles.quickAddLabel}>
+              <Icon name="heart" filled={saved} size={16} />
+              {saved ? t('products.savedShort') : t('products.saveShort')}
+            </span>
+          </button>
+        ) : (
         <button type="button" className={styles.quickAdd} onClick={handleAdd} disabled={!available.length}>
           <AnimatePresence mode="wait" initial={false}>
             <motion.span
@@ -93,6 +116,7 @@ export function ProductCard({ product }: ProductCardProps) {
             </motion.span>
           </AnimatePresence>
         </button>
+        )}
       </div>
 
       <div className={styles.info}>
@@ -123,13 +147,20 @@ export function ProductCard({ product }: ProductCardProps) {
             ))}
           </div>
         )}
-        <p className={styles.sizes}>
-          {shownVariants.map((v) => (
-            <span key={v.id} className={v.available ? undefined : styles.soldOutSize}>
-              {v.size}
-            </span>
-          ))}
-        </p>
+        {soon ? (
+          <p className={styles.soonLine}>
+            <Icon name="sparkle" size={12} />
+            <span>{t('products.comingSoonShort')}</span>
+          </p>
+        ) : (
+          <p className={styles.sizes}>
+            {shownVariants.map((v) => (
+              <span key={v.id} className={v.available ? undefined : styles.soldOutSize}>
+                {v.size}
+              </span>
+            ))}
+          </p>
+        )}
         <p className={styles.sku}>{product.sku}</p>
       </div>
     </article>
