@@ -35,6 +35,8 @@ export interface ImageFrame {
   focus: string;
   /** Acercamiento (1 = la foto ocupa todo el ancho). */
   zoom: number;
+  /** Posición de la foto en el diseño (0 = principal). Solo se usa para ordenar. */
+  pos?: number;
 }
 
 export interface ProductImage {

@@ -1,4 +1,5 @@
-import { demoCategories } from '@/data/demoProducts';
+import { demoCategories, demoProducts } from '@/data/demoProducts';
+import { shopifyDesign } from '@/data/shopifyFraming';
 import type { Locale, Product } from '@/types/commerce';
 import type { CommerceAdapter } from '../types';
 import { queryProducts } from '../queryProducts';
@@ -27,12 +28,39 @@ async function fetchAll(language: string): Promise<ShopifyProduct[]> {
  * y los filtros, la búsqueda y el orden se resuelven en el navegador, igual que en el modo local.
  * Pensado para catálogos de boutique (cientos de prendas, no decenas de miles).
  */
+/**
+ * Coloca cada prenda de Shopify en la misma posición que en el diseño original:
+ * hereda su fecha de «novedad» y, si en Shopify no tiene colecciones ni insignias propias, las del diseño.
+ * Las prendas nuevas (sin pareja en el diseño) usan sus datos de Shopify y salen primero en «Más nuevos».
+ */
+const designByHandle = new Map(demoProducts.map((p, i) => [p.handle, { product: p, index: i }]));
+const designOf = (p: Product) => designByHandle.get(shopifyDesign[p.handle] ?? p.handle);
+
+function withDesign(p: Product): Product {
+  const design = designOf(p)?.product;
+  if (!design) return p;
+  const ownCollections = p.collections.filter((c) => c !== 'frontpage');
+  const ownBadges = p.badges.filter((b) => b !== 'sale');
+  return {
+    ...p,
+    createdAt: design.createdAt,
+    collections: ownCollections.length ? p.collections : [...new Set([...p.collections, ...design.collections])],
+    badges: ownBadges.length ? p.badges : [...new Set([...design.badges.filter((b) => b !== 'sale'), ...p.badges])],
+  };
+}
+
+/** Orden del diseño (las nuevas, al final); los empates de fecha conservan este orden. */
+function designOrder(products: Product[]): Product[] {
+  const rank = (p: Product) => designOf(p)?.index ?? Number.MAX_SAFE_INTEGER;
+  return [...products].sort((a, b) => rank(a) - rank(b));
+}
+
 let catalog: Promise<Product[]> | null = null;
 function loadCatalog(): Promise<Product[]> {
   catalog ??= Promise.all([fetchAll(LANGUAGE.es), fetchAll(LANGUAGE.en).catch(() => [])])
     .then(([es, en]) => {
       const enById = new Map(en.map((p) => [p.id, p]));
-      return es.filter((p) => p.variants.nodes.length).map((p) => mapProduct(p, enById.get(p.id)));
+      return designOrder(es.filter((p) => p.variants.nodes.length).map((p) => withDesign(mapProduct(p, enById.get(p.id)))));
     })
     .catch((err) => {
       catalog = null; // permite reintentar en la siguiente navegación

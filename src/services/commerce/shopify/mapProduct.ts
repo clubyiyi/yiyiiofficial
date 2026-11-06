@@ -78,7 +78,16 @@ function categoryOf(p: ShopifyProduct): CategorySlug {
 }
 
 /** `es` es el producto en español; `en`, la misma consulta en inglés (si la tienda tiene traducciones). */
-export function mapProduct(es: ShopifyProduct, en?: ShopifyProduct): Product {
+export function mapProduct(shopEs: ShopifyProduct, en?: ShopifyProduct): Product {
+  // Fotos en el orden del diseño (la principal primero); las que no están en el diseño, al final en su orden de Shopify.
+  const fileName = (url: string) => url.split('?')[0].split('/').pop() ?? '';
+  const frames = shopifyFraming[shopEs.handle] ?? {};
+  const posOf = (url: string) => frames[fileName(url)]?.pos ?? Number.MAX_SAFE_INTEGER;
+  const es: ShopifyProduct = {
+    ...shopEs,
+    images: { nodes: [...shopEs.images.nodes].sort((a, b) => posOf(a.original) - posOf(b.original)) },
+  };
+  const enAlt = new Map(en?.images.nodes.map((n) => [n.id, n.altText]));
   const category = categoryOf(es);
   const art = demoCategories.find((c) => c.slug === category)!.heroArt;
   const tags = es.tags.map((t) => t.trim().toLowerCase());
@@ -87,12 +96,11 @@ export function mapProduct(es: ShopifyProduct, en?: ShopifyProduct): Product {
   const colorOptEn = en?.options.find((o) => o.name === colorOpt?.name) ?? en?.options[es.options.indexOf(colorOpt!)];
   const sizeOpt = es.options.find((o) => SIZE_OPTION.test(o.name));
 
-  const fileName = (url: string) => url.split('?')[0].split('/').pop() ?? '';
-  const images: ProductImage[] = es.images.nodes.map((img, i) => ({
+  const images: ProductImage[] = es.images.nodes.map((img) => ({
     src: img.url,
     webp: img.webp,
-    frame: shopifyFraming[es.handle]?.[fileName(img.original)],
-    alt: loc(img.altText || es.title, en?.images.nodes[i]?.altText || en?.title),
+    frame: frames[fileName(img.original)],
+    alt: loc(img.altText || es.title, enAlt.get(img.id) || en?.title),
     art,
   }));
   if (!images.length) images.push({ alt: loc(es.title, en?.title), art });
